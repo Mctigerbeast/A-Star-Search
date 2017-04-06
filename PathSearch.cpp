@@ -45,6 +45,7 @@ namespace fullsail_ai { namespace algorithms {
 
 	}
 
+	//Checks if AdjacentTile is adjacent to the the CurrentTile
 	bool PathSearch::CheckIfAdjacent(Tile * CurrentTile, Tile * AdjacentTile)
 	{
 		int CurrRow = CurrentTile->getRow();
@@ -115,8 +116,10 @@ namespace fullsail_ai { namespace algorithms {
 			}
 		}
 
+		//iterate through the tiles, checking for adjacent tiles and assigning weights to those adjacent tiles
 		for (MapGraphIter = MyMapGraph.begin(); MapGraphIter != MyMapGraph.end(); MapGraphIter++)
 		{
+			//nested for loops from -1 -> 2 in order to check all around the current tile
 			for (int row = -1; row < 2; row++)
 			{
 				for (int column = -1; column < 2; column++)
@@ -125,6 +128,8 @@ namespace fullsail_ai { namespace algorithms {
 
 					if (TempTile != NULL)
 					{
+						//If TempTile is adjacent to MapGraphIter->second->tile
+						//add that tile to the edges list and assign that tile a weight.
 						if (CheckIfAdjacent(TempTile, MapGraphIter->second->tile))
 						{
 							Edge * myEdge = new Edge(MyMapGraph[TempTile], estimate(TempTile, MapGraphIter->second->tile) * TempTile->getWeight());
@@ -205,7 +210,11 @@ namespace fullsail_ai { namespace algorithms {
 
 				if (successor->tile->getWeight() == 0)
 					continue;
-			
+			        
+				//If the current search node has been visited
+				//check it's cost, compare the cost of the visited node to the cost
+				//of the current tile plus the curent edge. If it's less, then update the 
+				//planner node and add it to the list.
 				if (Visited[successor] != NULL)
 				{
 					PlannerNode* node = Visited[successor];
@@ -217,7 +226,6 @@ namespace fullsail_ai { namespace algorithms {
 						node->Cost = node->GivenCost + node->HeuristicCost * 1.0f;
 						node->Parent = current;
 						open.push(node);
-
 					}
 				}
 				else
